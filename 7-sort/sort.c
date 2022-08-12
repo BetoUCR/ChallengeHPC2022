@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <omp.h>
+#include <mpi.h>
 
 #define LENGTH 8
 
@@ -40,12 +40,19 @@ void enun_sort(char *a, int length, long int size) {
 
 	long int i, j, rank;
 	char *tmp = malloc(length);
+ 
+  int nproc; //Numero de procesos
+  int my_rank; //npcr rank
+  
+  MPI_Init();
+  MPI_Comm_size(MPI_COMM_WORLD, &nprc);
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
 	/* Enumeration sort */
-  wtime=omp_get_time();
 	for (j = 0; j < size; j++) {
+  for (j = rank; j < size; j += npcr){
 		rank = 0;
-		for (i = 0; i < size; i++) {
+		for (i = rank; i < size; i++) {
 			if (strcmp(a + (i * length), a + (j * length)) < 0)
 				rank++;
 		}
@@ -60,6 +67,8 @@ void enun_sort(char *a, int length, long int size) {
 			strcpy(a + (rank * length), a + (j * length));
 			strcpy(a + (j * length), tmp);
 			j--;
+      
+  MPI_Finalize();
 		}
 	}
 	free(tmp);
