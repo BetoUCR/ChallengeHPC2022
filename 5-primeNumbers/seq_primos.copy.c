@@ -3,8 +3,7 @@
 #include "mpi.h"
 #include <math.h>
 #include <stdbool.h>
-#include <omp.h>
-#include <mpi.h>
+
 
 bool primo (int n) {
         int i;
@@ -16,7 +15,7 @@ bool primo (int n) {
 }
 
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 	int cont = 0, total = 0;
 	long int i, n;
 	int inicio, salto;
@@ -31,7 +30,6 @@ int main(int argc, char *argv[]){
     inicio = 3;
     salto = 1;
 
-	#pragma omp parallel for private (i) reduction(+ : cont)
 	for (i = inicio; i <= n; i += salto) 
 	{	
 		if(primo(i)) cont++;

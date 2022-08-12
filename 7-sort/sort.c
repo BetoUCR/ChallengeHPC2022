@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <omp.h>
 
 #define LENGTH 8
 
@@ -41,6 +42,7 @@ void enun_sort(char *a, int length, long int size) {
 	char *tmp = malloc(length);
 
 	/* Enumeration sort */
+  wtime=omp_get_time();
 	for (j = 0; j < size; j++) {
 		rank = 0;
 		for (i = 0; i < size; i++) {

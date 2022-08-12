@@ -7,7 +7,6 @@ o maior valor para cada cor de cada pixel (8 ou 16 bits). A seguir a informaçã
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <omp.h>
 
 #define RGB_COMPONENT_COLOR 255
 
@@ -97,7 +96,6 @@ void Histogram(PPMImage *image, float *h) {
 
 	cols = image->x;
 	rows = image->y;
-
         /* Faz a leitura de cada pixel, normalizando entre 0 e 3 */
 	for (i = 0; i < n; i++) {
 		image->data[i].red = floor((image->data[i].red * 4) / 256);
@@ -130,24 +128,21 @@ void Histogram(PPMImage *image, float *h) {
 
 int main(int argc, char *argv[]) {
 
-	int i, myid, nth;
+	int i;
 
 	PPMImage *image = readPPM();
         /* Aloca memória para o vetor do histograma */
 	float *h = (float*)malloc(sizeof(float) * 64);
         /* Zera o vetor de histograma */
-
-	#pragma omp parallel for
-	for (i = myid; i < 64; i += nth) h[i] = 0.0;
+	for(i=0; i < 64; i++) h[i] = 0.0;
         /* Monta o histograma da imagem com 64 pontos */
 	Histogram(image, h);
 	/* Imprime o resultado do histograma */
-	for (i = myid ; i < 64; i += nth){
+	for (i = 0; i < 64; i++){
 		printf("%0.3f ", h[i]);
 	}
 	printf("\n");
 	free(h);
 
 	return 0;
-
 }
